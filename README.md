@@ -45,7 +45,7 @@ $ timer [options] [minutes ...]
     -v                               Display version information
 ```
 
-Timer duration may be specified in fraction or decimal form; e.g., 90 seconds may be specified as **1.5** or **3/2**.
+Timer duration may be specified in fraction or decimal form; e.g., 90 seconds may be specified as `1.5` or `3/2`.
 
 If multiple durations are specified, an alert will be triggered at the end of each interval.
 
