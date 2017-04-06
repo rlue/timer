@@ -9,11 +9,15 @@ timer – a Pomodoro/Interval Timer
 * Set a simple countdown, or specify a set of intervals to time
 * Repeat interval sets _n_ times, or indefinitely
 
-![](https://raw.githubusercontent.com/rlue/i/master/timer/terminal.gif)
+### tmux-Aware Interface
+
 In a regular terminal session, remaining time is displayed in the window title.
 
-![](https://raw.githubusercontent.com/rlue/i/master/timer/tmux.gif)
+![](https://raw.githubusercontent.com/rlue/i/master/timer/terminal.gif)
+
 In a tmux session, remaining time is displayed in the status bar beside the session name.
+
+![](https://raw.githubusercontent.com/rlue/i/master/timer/tmux.gif)
 
 Installation
 ------------
