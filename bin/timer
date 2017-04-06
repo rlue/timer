@@ -35,7 +35,7 @@ Timer__cleanup() {
     printf "\033]0;\007"
   fi
 
-  case $(ps -o stat= -p $$) in      # clear command line
+  case $(ps -o stat= -p $$) in      # if in fg, clear command line
     *+*)
       if [ ! "$Timer__quiet_mode" = true ]; then
         printf "\r\e[K"
