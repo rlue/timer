@@ -182,5 +182,8 @@ while [ $Timer__sets -ne 0 ]; do
   Timer__sets=$(( $Timer__sets - 1 ))
 done
 
-printf "\r\e[K"
-echo
+# If running in foreground
+case $(ps -o stat= -p $$) in
+  *+*) printf "\r\e[K"
+       echo "[$(date +%H:%M)] Time expired";;
+esac
