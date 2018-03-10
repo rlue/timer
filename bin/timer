@@ -39,11 +39,20 @@ catch_bad_input() {
 ring() {
   local bell="bell_$1"
 
-  # TODO: support multiple platforms
-  if [[ $(osascript -e 'output muted of (get volume settings)') == 'true' ]]; then
+  if system_muted; then
     printf "\a"
   else
     eval echo "\$$bell" | base64 --decode | play -qt mp3 - &
+  fi
+}
+
+system_muted() {
+  [ -z "$operating_system" ] && operating_system="$(uname -s)"
+
+  if [ "$operating_system" == "Linux" ]; then
+    amixer get Master 2>/dev/null && amixer get Master | grep off >/dev/null 2>&1
+  elif  [ "$operating_system" == "Darwin" ]; then
+    [[ $(osascript -e 'output muted of (get volume settings)') == 'true' ]]
   fi
 }
 
