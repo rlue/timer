@@ -50,7 +50,12 @@ system_muted() {
   [ -z "$operating_system" ] && operating_system="$(uname -s)"
 
   if [ "$operating_system" == "Linux" ]; then
-    amixer get Master 2>/dev/null && amixer get Master | grep off >/dev/null 2>&1
+    if type pactl >/dev/null 2>&1; then
+      # TODO: investigate ways this could go wrong
+      pactl list sinks | grep -i "mute: yes"
+    elif type amixer >/dev/null 2>&1; then
+      amixer get Master 2>/dev/null && amixer get Master | grep off >/dev/null 2>&1
+    fi
   elif  [ "$operating_system" == "Darwin" ]; then
     [[ $(osascript -e 'output muted of (get volume settings)') == 'true' ]]
   fi
