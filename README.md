@@ -30,6 +30,21 @@ via [Homebrew][hb]
 $ brew install rlue/utils/timer
 ```
 
+### Linux
+
+#### Dependencies
+
+* bc
+* sox
+* libsox-fmt-mp3
+
+Download `timer` to a directory on your $PATH (_e.g._, `~/bin`, `~/.local/bin`, `/usr/local/bin`) and make it executable:
+
+```sh
+$ curl -o ~/bin/timer https://raw.githubusercontent.com/rlue/timer/master/bin/timer
+$ chmod +x ~/bin/timer
+```
+
 Usage
 -----
 
