@@ -98,6 +98,35 @@ Or to repeat this 135-minute set twice in a row,
 
     $ timer -r2 25 5 25 5 25 5 25 20
 
+### Troubleshooting
+
+timer uses [sox](http://sox.sourceforge.net/) under the hood to chime the
+bell. If you receive an error message that begins `play WARN`, it may mean
+that sox has selected the wrong audio driver or sound card (“audio device”) to
+play on.
+
+When this happens, specifying the appropriate audio driver or device via an
+environment variable should fix the problem:
+
+    $ AUDIODRIVER=alsa timer 5
+
+If this works, you can make this setting permanent either by defining a shell
+alias
+
+```sh
+# ~/.bashrc
+
+alias timer="AUDIODRIVER=alsa timer"
+```
+
+or exporting the environment variable globally.
+
+```sh
+# ~/.profile
+
+export AUDIODRIVER=alsa
+```
+
 License
 -------
 
