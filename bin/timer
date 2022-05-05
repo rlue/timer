@@ -100,7 +100,7 @@ update_display() {
   # In foreground: write remaining time to command line
   if [ "$mode" != "quiet" ]; then
     case $(ps -o stat= -p $$) in
-      *+*) printf "$countdown_text" ;;
+      *+*) printf "\r$countdown_text" ;;
     esac
   fi
 }
@@ -110,7 +110,7 @@ format_countdown() {
   local hours=$(($time_left/3600))
   local minutes=$((($time_left/60)%60))
   local seconds=$(($time_left%60))
-  printf "\r%02dh%02dm%02ds" $hours $minutes $seconds
+  printf "%02dh%02dm%02ds" $hours $minutes $seconds
 }
 
 print_completion_message() {
