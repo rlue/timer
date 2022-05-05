@@ -39,11 +39,14 @@ catch_bad_input() {
 ring() {
   local bell="bell_$1"
 
-  if system_muted; then
-    printf "\a"
-  else
+  if ! system_muted; then
     eval echo "\$$bell" | base64 --decode | play -qt mp3 - &
   fi
+
+  for _ in $(seq "$([ "$1" = "set" ] && echo 8 || echo 4)"); do
+    printf "\a"
+    sleep 0.125
+  done &
 }
 
 system_muted() {
