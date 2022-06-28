@@ -66,8 +66,8 @@ $ brew install rlue/utils/timer
 Download `timer` to a directory on your $PATH (_e.g._, `~/bin`, `~/.local/bin`, `/usr/local/bin`) and make it executable:
 
 ```sh
-$ curl -o ~/bin/timer https://raw.githubusercontent.com/rlue/timer/master/bin/timer
-$ chmod +x ~/bin/timer
+$ curl -o ~/.local/bin/timer https://raw.githubusercontent.com/rlue/timer/master/bin/timer
+$ chmod +x ~/.local/bin/timer
 ```
 
 Usage
