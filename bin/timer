@@ -112,38 +112,46 @@ rename_tmux_session() {
   fi
 }
 
-# Takes one argument ()
 update_display() {
-  local countdown_text=$1
+  local hours=$1    # %d
+  local minutes=$2  # %02d
+  local seconds=$3  # %02d
+
+  if [ $hours -ne 0 ] || [ "$minutes$seconds" = "0000" ]; then
+    std_format=${hours}:${minutes}:${seconds}
+    tmux_format=${hours}h${minutes}m${seconds}s
+  else
+    std_format=${minutes}:${seconds}
+    tmux_format=${minutes}m${seconds}s
+  fi
 
   # tmux UI: write remaining time to session name
   if [ -n "$TMUX" ]; then
-    tmux rename -t "*$session_upcase" \
-                   "$countdown_text $session_upcase"
+    tmux rename -t "*$session_upcase" "$tmux_format $session_upcase"
   # Bare UI: write remaining time to window title
   else
-    printf "\033]0;$countdown_text\007"
+    printf "\033]0;$std_format\007"
   fi
 
   # In foreground: write remaining time to command line
   if [ "$mode" != "quiet" ]; then
     case $(ps -o stat= -p $$) in
-      *+*) printf "\r$countdown_text" ;;
+      *+*) printf "\r\e[K$std_format" ;;
     esac
   fi
 
   # Pipe mode: write remaining time to FIFO
   if [ -p "$named_pipe" ]; then
-    echo "$countdown_text" > "$named_pipe"
+    echo "$std_format" > "$named_pipe"
   fi
 }
 
-format_countdown() {
+countdown_units() {
   local time_left=$1
   local hours=$(($time_left/3600))
   local minutes=$((($time_left/60)%60))
   local seconds=$(($time_left%60))
-  printf "%02dh%02dm%02ds" $hours $minutes $seconds
+  printf "%d %02d %02d" $hours $minutes $seconds
 }
 
 print_completion_message() {
@@ -196,7 +204,9 @@ run_interval() {
   next_interval_start_time=$end_time
 
   while [ $time_left -gt 0 ]; do
-    update_display $(format_countdown $time_left)
+    # NOTE: This is un-quoted on purpose!
+    # countdown_units() provides three space-separated args to update_display()
+    update_display $(countdown_units $time_left)
     sleep 1
     time_left=$(($end_time - $(date +%s)))
   done
