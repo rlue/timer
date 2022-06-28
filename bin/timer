@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 version=0.1.4
+named_pipe=/tmp/timer.fifo
 
 # HELPER FUNCTIONS =============================================================
 # Auxiliary --------------------------------------------------------------------
@@ -16,6 +17,7 @@ Usage: timer [options] [${_ul}minutes${_rg} ...]
     -r ${_ul}rounds${_rg}                        Repeat timer (n < 0 repeats forever)
     -d ${_ul}seconds${_rg}                       Delay timer start
     -q                               Suppress command line output
+    -p                               Write to named pipe /tmp/timer.fifo
     -h                               Display this message
     -v                               Display version information
 
@@ -63,6 +65,12 @@ system_muted() {
 
 # Display ----------------------------------------------------------------------
 cleanup() {
+  # Why write to the pipe before deleting it?
+  # To free up any process that may be waiting on input from it.
+  if [ -p "$named_pipe" ]; then
+    > "$named_pipe" && rm -rf "$named_pipe"
+  fi
+
   if [ -n "$TMUX" ]; then
     # reset tmux session name
     tmux rename -t "*$session_upcase" "$session"
@@ -106,6 +114,11 @@ update_display() {
       *+*) printf "\r$countdown_text" ;;
     esac
   fi
+
+  # Pipe mode: write remaining time to FIFO
+  if [ -p "$named_pipe" ]; then
+    echo "$countdown_text" > "$named_pipe"
+  fi
 }
 
 format_countdown() {
@@ -117,6 +130,10 @@ format_countdown() {
 }
 
 print_completion_message() {
+  if [ -p "$named_pipe" ] ; then
+    echo "Time expired" > "$named_pipe"
+  fi
+
   # ...but only if running in foreground
   case $(ps -o stat= -p $$) in
     *+*) printf "\r\e[K"
@@ -177,11 +194,19 @@ run_interval() {
 
 # PROGRAM LOGIC ================================================================
 # Parse options ----------------------------------------------------------------
-while getopts ":qvhr:d:" opt; do
+while getopts ":qvhpr:d:" opt; do
   case $opt in
     h) mode="help"; break ;;
     v) mode="version"; break ;;
     q) mode="quiet" ;;
+    p)
+      if [ -p "$named_pipe" ]; then
+        >&2 echo "timer: another instance is already running"
+        exit 1
+      fi
+
+      mkfifo "$named_pipe"
+      ;;
     r)
       catch_bad_input $OPTARG '^-?[0-9]+$' 'not an integer'
       sets=$OPTARG

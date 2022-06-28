@@ -19,6 +19,29 @@ In a tmux session, remaining time is displayed in the status bar beside the sess
 
 ![](https://raw.githubusercontent.com/rlue/i/master/timer/tmux.gif)
 
+### In a custom status bar (_e.g.,_ i3status)
+
+`timer -p` (for “named `p`ipe”) can be used
+to feed the countdown to another process via `/tmp/timer.fifo`.
+
+For a crude approach to displaying the remaining time in i3status,
+add the following lines to your config file:
+
+```sh
+order += "read_file timer"
+
+read_file timer {
+	path = "/tmp/timer.fifo"
+	format_bad = ""
+}
+```
+
+> **Note:** This method results in an empty slot (or “module”) in i3bar when
+> timer is not in use. A cleaner solution is left as an exercise for the
+> reader.
+>
+> (Hint: See `man i3status`, under “EXTERNAL SCRIPTS/PROGRAMS WITH I3STATUS”.)
+
 Installation
 ------------
 
@@ -56,6 +79,7 @@ $ timer [options] [minutes ...]
     -r rounds                        Repeat timer (n < 0 repeats forever)
     -d seconds                       Delay timer start
     -q                               Suppress command line output
+    -p                               Write to named pipe /tmp/timer.fifo
     -h                               Display this message
     -v                               Display version information
 ```
@@ -130,7 +154,7 @@ export AUDIODRIVER=alsa
 License
 -------
 
-© 2017 Ryan Lue. This project is licensed under the terms of the MIT license.
+© 2022 Ryan Lue. This project is licensed under the terms of the MIT license.
 
 [hb]: https://brew.sh/
 [pm]: https://en.wikipedia.org/wiki/Pomodoro_Technique#Underlying_principles
