@@ -137,7 +137,7 @@ print_completion_message() {
   # ...but only if running in foreground
   case $(ps -o stat= -p $$) in
     *+*) printf "\r\e[K"
-         echo "[$(date +%H:%M)] Time expired";;
+         echo "[$(date +%R)] Time expired";;
   esac
 }
 
