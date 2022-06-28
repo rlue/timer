@@ -17,6 +17,7 @@ Usage: timer [options] [${_ul}minutes${_rg} ...]
     -r ${_ul}rounds${_rg}                        Repeat timer (n < 0 repeats forever)
     -d ${_ul}seconds${_rg}                       Delay timer start
     -q                               Suppress command line output
+    -N                               Suppress desktop notifications
     -p                               Write to named pipe /tmp/timer.fifo
     -h                               Display this message
     -v                               Display version information
@@ -41,14 +42,30 @@ catch_bad_input() {
 ring() {
   local bell="bell_$1"
 
+  # Audio bell
   if ! system_muted; then
     eval echo "\$$bell" | base64 --decode | play -qt mp3 - &
   fi
 
+  # Visual bell
   for _ in $(seq "$([ "$1" = "set" ] && echo 8 || echo 4)"); do
     printf "\a"
     sleep 0.125
   done &
+
+  # Notification
+  if [ -z $notifications_off ]; then
+    if [ $set_count -eq 1 ] && [ "$1" = "set" ]; then
+      message="Finished"
+    else
+      message="${1^} complete"
+    fi
+
+    case $platform in
+      Linux) notify-send --app-name=timer --icon=emblem-default timer "$message" ;;
+      Darwin) osascript -e "display notification \"$message\" with title \"timer\"" ;;
+    esac
+  fi
 }
 
 system_muted() {
@@ -194,7 +211,7 @@ run_interval() {
 
 # PROGRAM LOGIC ================================================================
 # Parse options ----------------------------------------------------------------
-while getopts ":qvhpr:d:" opt; do
+while getopts ":qvhpNr:d:" opt; do
   case $opt in
     h) mode="help"; break ;;
     v) mode="version"; break ;;
@@ -207,6 +224,7 @@ while getopts ":qvhpr:d:" opt; do
 
       mkfifo "$named_pipe"
       ;;
+    N) notifications_off=1 ;;
     r)
       catch_bad_input $OPTARG '^-?[0-9]+$' 'not an integer'
       sets=$OPTARG
@@ -234,6 +252,12 @@ esac
 # Initialize variables ---------------------------------------------------------
 # How many sets?
 [ -z $sets ] && sets=1
+
+platform=$(uname)
+
+if [ "$platform" = "Linux" ] && ! command -v notify-send >/dev/null 2>&1; then
+  notifications_off=1
+fi
 
 # What arrangement of intervals?
 for duration in "$@"; do

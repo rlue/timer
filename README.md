@@ -8,6 +8,7 @@ timer – a Pomodoro/Interval Timer
 * Calming, serene alert tone inspired by Buddhist meditation bells
 * Set a simple countdown, or specify a set of intervals to time
 * Repeat interval sets _n_ times, or indefinitely
+* Desktop notification support
 
 ### tmux-Aware Interface
 
@@ -60,6 +61,7 @@ $ brew install rlue/utils/timer
 * bc
 * sox
 * libsox-fmt-mp3
+* libnotify-bin
 
 Download `timer` to a directory on your $PATH (_e.g._, `~/bin`, `~/.local/bin`, `/usr/local/bin`) and make it executable:
 
@@ -79,6 +81,7 @@ $ timer [options] [minutes ...]
     -r rounds                        Repeat timer (n < 0 repeats forever)
     -d seconds                       Delay timer start
     -q                               Suppress command line output
+    -N                               Suppress desktop notifications
     -p                               Write to named pipe /tmp/timer.fifo
     -h                               Display this message
     -v                               Display version information
