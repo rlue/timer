@@ -142,7 +142,7 @@ update_display() {
 
   # Pipe mode: write remaining time to FIFO
   if [ -p "$named_pipe" ]; then
-    echo "$std_format" > "$named_pipe"
+    echo "⏳ $std_format" > "$named_pipe"
   fi
 }
 
