@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-version=0.1.5
+version=0.1.6
 named_pipe=/tmp/timer.fifo
 
 # HELPER FUNCTIONS =============================================================
