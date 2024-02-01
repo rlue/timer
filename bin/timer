@@ -55,7 +55,9 @@ ring() {
 
   # Notification
   if [ -z $notifications_off ]; then
-    if [ $set_count -eq 1 ] && [ "$1" = "set" ]; then
+    if [ -z "$set_count" ]; then # delay countdown finished
+      message="Ready"
+    elif [ $set_count -eq 1 ] && [ "$1" = "set" ]; then
       message="Finished"
     else
       message="${1^} complete"
