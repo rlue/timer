@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-version=0.1.6
+version=0.1.7
 named_pipe=/tmp/timer.fifo
 
 # HELPER FUNCTIONS =============================================================
@@ -87,7 +87,7 @@ cleanup() {
   # Why write to the pipe before deleting it?
   # To free up any process that may be waiting on input from it.
   if [ -p "$named_pipe" ]; then
-    > "$named_pipe" && rm -rf "$named_pipe"
+    cat "$named_pipe" & > "$named_pipe" && rm -rf "$named_pipe"
   fi
 
   if [ -n "$TMUX" ]; then
